@@ -1,0 +1,397 @@
+1. MENGINSTALL MYSQL
+install & set environment variable
+mysql -uroot -p
+
+2. DATABASE
+SHOW DATABASES;
+CREATE DATABASE belajar_mysql;
+DROP DATABASE belajar_mysql;
+USE belajar_mysql;
+
+3. TIPE DATA
+
+4. TIPE DATA NUMBER
+Integer           => TINYINT, SMALLINT, MEDIUMINT, INT, BIGINT
+Floating Point    => FLOAT, DOUBLE
+DECIMAL           => DECIMAL(5, 2) = -999.99 to 999.99 => panjang 5
+NUMBER ATTRIBUTE  => TYPE(N) ZEROFILL => INT(3) ZEROFILL = 7 is displayed as 007
+
+5. TIPE DATA STRING
+CHAR(4) value "ab"      => "ab  " 4 bytes
+VARCHAR(4) value "ab"   => "ab"   3 bytes
+TEXT                    => TINYTEXT, TEXT, MEDIUMTEXT, LONGTEXT
+ENUM("Pria", "Wanita")  => hanya bisa menerima data Pria atau Wanita
+
+6. TIPE DATA DATE DAN TIME
+DATE      => YYYY-MM-DD
+DATETIME  => YYYY-MM-DD HH:MM:SS
+TIMESTAMP => YYYY-MM-DD HH:MM:SS
+TIME      => HH:MM:SS
+YEAR      => YYYY
+
+7. TIPE DATA BOOLEAN
+
+8. TIPE DATA LAINNYA
+BLOB, SPATIAL, JSON, SET, dan lainnya
+
+9. TABLE
+SHOW ENGINES;
+SHOW TABLES;
+CREATE TABLE barang(id INT, nama VARCHAR(100), harga INT, jumlah INT) ENGINE = InnoDB;
+
+// melihat struktur tabel
+DESCRIBE nama_tabel;
+DESC nama_tabel;
+
+// melihat struktur pembuatan tabelnya
+SHOW CREATE TABLE nama_tabel;
+
+ALTER TABLE barang ADD COLUMN deskripsi TEXT;
+ALTER TABLE barang ADD COLUMN salah TEXT;
+ALTER TABLE barang DROP COLUMN salah;
+
+ALTER TABLE barang MODIFY nama VARCHAR(200) AFTER deskripsi;
+ALTER TABLE barang MODIFY nama VARCHAR(200) FIRST;
+ALTER TABLE barang MODIFY harga INT NOT NULL DEFAULT 0;
+ALTER TABLE barang MODIFY jumlah INT NOT NULL DEFAULT 0;
+SET SQL_SAFE_UPDATES = 0;
+SET SQL_SAFE_UPDATES = 1;
+
+
+// Null Value default boleh NULL
+ALTER TABLE barang MODIFY id INT NOT NULL;
+
+// Default Value
+ALTER TABLE barang MODIFY nama VARCHAR(200) NOT NULL DEFAULT "default";
+ALTER TABLE barang ADD waktu_dibuat TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP;
+
+// Menghapus semua data di tabel & Membuat ulang tabel
+TRUNCATE barang;
+
+// Menghapus tabel
+DROP TABLE barang;
+
+10. INSERT DATA
+INSERT INTO products(id, name, price, quantity) VALUES ("P0001", "Mie Ayam Original", 15000, 100);
+INSERT INTO products(id, name, description, price, quantity) VALUES ("P0002", "Mie Ayam Bakso", "Deskripsinya Mie Ayam Bakso", 20000, 100);
+
+INSERT INTO products(id, name, price, quantity) VALUES
+("P0003", "Mie Ayam Ceker", 20000, 100),
+("P0004", "Mie Ayam Spesial", 25000, 100),
+("P0005", "Mie Ayam Jumbo", 35000, 100);
+
+11. SELECT DATA
+SELECT * FROM products;
+SELECT id, name, price, quantity FROM products;
+
+12. PRIMARY KEY
+ALTER TABLE products ADD PRIMARY KEY(id);
+
+13. WHERE CLAUSE
+SELECT id, name, price, quantity FROM products WHERE price = 20000;
+
+14. UPDATE DATA
+UPDATE products SET category = "Makanan" WHERE id = "P0001";
+UPDATE products SET category = "Makanan", description = "Deskripsi Mie Ayam Ceker" WHERE id = "P0003";
+UPDATE products SET price = price + 5000 WHERE id = "P0005";
+
+15. DELETE DATA
+DELETE FROM products WHERE id = "P0005";
+
+16. ALIAS
+bisa untuk table dan kolom
+SELECT id AS "Kode", name AS "Nama", category AS "Kategori", price AS "Harga", quantity AS "Stok" FROM products;
+SELECT p.id AS "Kode", p.name AS "Nama", p.category AS "Kategori", p.price AS "Harga", p.quantity AS "Stok" FROM products AS p;
+
+17. WHERE OPERATOR
+Operator Perbandingan => = , <> / != , < , <= , > , >=
+AND & OR Operator     => AND OR prioritas bisa menggunakan ()
+
+LIKE  Operator        => mencari sebagian kata di string tapi lambat jika datanya banyak
+LIKE "b%"     = String dengan awalan b
+LIKE "%a"     = String dengan akhiran a
+LIKE "%abc%"  = String berisi abc
+NOT LIKE      = Tidak LIKE
+SELECT * FROM products WHERE name LIKE "%ori%";
+
+NULL Operator         => IS NULL, IS NOT NULL
+BEETWEEN Operator     => BETWEEN, NOT BEETWEEN // SELECT * FROM products WHERE price BETWEEN 20000 AND 40000;
+IN Operator           => SELECT * FROM products WHERE category IN ("Makanan", "Minuman");
+
+18. ORDER BY CLAUSE
+untuk mengurutkan data ASC atau DESC berdasarkan kolom yang dipilih default ASC
+SELECT * FROM products ORDER BY id DESC;
+
+19. LIMIT CLAUSE
+membatasi jumlah data
+SELECT * FROM products WHERE price > 10000 LIMIT 2;
+SELECT * FROM products WHERE price > 10000 LIMIT 2, 3; // 2 skip
+
+20. SELECT DISTINCT DATA
+menghilangkan data duplikat ketika SELECT misal pada kategori
+SELECT DISTINCT category from products;
+
+21. NUMERIC FUNCTION
+%, MOD
+*
++
+-
+/       => bisa floating point
+DIV     => dibulatkan integer
+
+SELECT 10 + 10 AS hasil;
+SELECT id, name, price DIV 1000 AS "Price in K" FROM products;
+SELECT id, name, price DIV 1000 AS "Price in K" FROM products WHERE price DIV 1000 >= 20;
+
+Ada fungsi matematika juga
+SELECT PI();
+
+22. AUTO INCREMENT
+hanya bisa di primary key
+
+CREATE TABLE admin (
+	id INT NOT NULL AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    PRIMARY KEY (id)
+) ENGINE = InnoDB;
+
+INSERT INTO admin(name) VALUES ("NFR");
+INSERT INTO admin(name) VALUES ("Hello");
+INSERT INTO admin(name) VALUES ("World!");
+
+SELECT * FROM admin;
+
+SELECT LAST_INSERT_ID();
+
+23. STRING FUNCTION
+TRIM, LOWER, LENGTH dan lainnya
+
+SELECT id, LENGTH(name) AS "Name Length" from products;
+
+24. DATA DAN TIME FUNCTION
+SELECT id, name, EXTRACT(MONTH FROM created_at) AS "Month", EXTRACT(YEAR FROM created_at) AS "Year" FROM products;
+SELECT id, name, MONTH(created_at) AS "Month", YEAR(created_at) AS "Year" FROM products;
+
+25. FLOW CONTROL FUNCTION
+CASE WHEN THEN
+IF
+IFNULL
+
+26. AGGREGATE FUNCTION
+paling mahal, paling murah, rata-rata, total dan lainnya
+COUNT, AVG, MAX, MIN
+SELECT COUNT(id) AS "Total Product" FROM products;
+
+27. GROUPING
+GROUP BY
+misal ingin melihat rata-rata berdasarkan kategori
+SELECT category, COUNT(id) AS "Total Product" FROM products GROUP BY category;
+
+HAVING CLAUSE
+untuk filter hasil aggregate function
+SELECT category, COUNT(id) AS "Total Product" FROM products GROUP BY category HAVING COUNT(id) > 1;
+
+28. CONSTRAINT
+untuk menjaga data di tabel tetap baik
+
+UNIQUE CONSTRAINT
+memastikan data tetap unique
+CREATE TABLE customers
+(
+	id INT NOT NULL AUTO_INCREMENT,
+	email VARCHAR(100) NOT NULL,
+	name VARCHAR(100) NOT NULL,
+	PRIMARY KEY (id),
+	UNIQUE KEY email_unique (email)
+) ENGINE = InnoDB;
+
+ALTER TABLE customers DROP CONSTRAINT email_unique;
+ALTER TABLE customers ADD CONSTRAINT email_unique UNIQUE (email);
+
+CHECK CONSTRAINT
+untuk mengecek data sebelum dimasukkan ke dalam database, misalnya harga di atas 1000
+ALTER TABLE products ADD CONSTRAINT price_check CHECK (price > 1000);
+
+29. INDEX
+MYSQL semakin banyak data maka semakin lambat mencari datanya, karena MYSQL melakukan pencarian dari baris pertama sampai terakhir
+kalau membuat index maka MYSQL akan menyimpan data dalam struktur data B-Tree sehingga akan mempermudah mencari data dan melakukan pengurutan ORDER BY
+( KOLOM )
+
+sesuaikan dengan kolom yang ingin digunakan untuk pencarian
+PRIMARY KEY & UNIQUE constraint otomatis sudah ditambahkan index
+
+CREATE TABLE sellers
+(
+	id INT NOT NULL AUTO_INCREMENT,
+    email VARCHAR(100) NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    PRIMARY KEY (id),
+    UNIQUE KEY email_unique (email),
+    INDEX name_index (name)
+) ENGINE = InnoDB;
+
+ADD INDEX
+DROP INDEX
+
+30. FULL-TEXT SEARCH
+jika butuh pencarian yang tidak hanya sekadar operasi =
+ALTER TABLE products ADD FULLTEXT product_search (name, description);
+
+Natural Language per kata
+SELECT * FROM products WHERE MATCH(name, description) AGAINST("mie" IN NATURAL LANGUAGE MODE);
+
+Boolean mengandung kata (+) , tidak mengandung kata (-)
+SELECT * FROM products WHERE MATCH(name, description) AGAINST("+mie -bakso" IN BOOLEAN MODE);
+
+Query Expansion 2 kali pencarian, pencarian kedua menggunakan kedekatan pencarian pertama, query pertama "bakso", query kedua "mie" karena query pertama ada "mie"
+
+31. TABLE RELATIONSHIP
+CREATE TABLE wishlist
+(
+	id INT NOT NULL AUTO_INCREMENT,
+    id_product VARCHAR(10) NOT NULL,
+    description TEXT,
+    PRIMARY KEY (id),
+    CONSTRAINT fk_wishlist_product FOREIGN KEY (id_product) REFERENCES products (id)
+) ENGINE = InnoDB;
+
+jika memasukkan data di wishlist tapi Foreign Key tidak ada di id products maka ditolak
+INSERT INTO wishlist(id_product, description) VALUES ("P0001", "bisa");
+INSERT INTO wishlist(id_product, description) VALUES ("salah", "tidak bisa");
+
+DELETE FROM products WHERE id = "P0001"; // tidak bisa di wishlist ada yang pakai karena DEFAULT RESTRICT
+
+ON DELETE & ON UPDATE
+RESTRICT    => ditolak, ditolak
+CASCADE     => ikut dihapus, ikut  diubah
+NO ACTION   => dibiarkan, dibiarkan
+SET NULL    => diubah jadi NULL, diubah jadi NULL
+
+ALTER TABLE wishlist DROP CONSTRAINT fk_wishlist_product;
+ALTER TABLE wishlist ADD CONSTRAINT fk_wishlist_product FOREIGN KEY (id_product) REFERENCES products (id) ON DELETE CASCADE ON UPDATE CASCADE;
+
+32. JOIN
+query select beberapa tabel sekaligus
+SELECT * FROM wishlist JOIN products ON (wishlist.id_product = products.id);
+SELECT wishlist.id, products.id, products.name FROM wishlist JOIN products ON (wishlist.id_product = products.id);
+SELECT w.id, p.id, p.name FROM wishlist AS w JOIN products as p ON (w.id_product = p.id);
+
+ALTER TABLE wishlist ADD CONSTRAINT fk_wishlist_customer FOREIGN KEY (id_customer) REFERENCES customers(id);
+UPDATE wishlist SET id_customer = 1 WHERE id_customer IS NULL; 
+
+JOIN Multiple Table
+SELECT
+    w.id AS "id wishlist",
+    p.id AS "id product",
+    c.email AS "email customer"
+FROM wishlist AS w
+JOIN products AS p ON (w.id_product = p.id)
+JOIN customers AS c ON (w.id_customer = c.id);
+
+33. ONE TO ONE RELATIONSHIP
+samakan primary key
+foreign key yang unique 
+
+34. ONE TO MANY RELATIONSHIP
+tidak perlu unique
+
+35. MANY TO MANY RELATIONSHIP
+solusinya membuat table relasi
+misal table order & table product => table order detail ada tambahan price dan quantity
+PRIMARY KEY => PRIMARY KEY (id_product, id_order)
+order detail tambahkan ADD CONSTRAINT fk_orders_detail_products
+order detail tambahkan ADD CONSTRAINT fk_orders_detail_orders
+
+SELECT * FROM orders
+    JOIN orders_detail ON (orders_detail.id_order = orders.id)
+    JOIN products ON (products.id = orders_detail.id_product);
+
+36. JENIS-JENIS JOIN
+INNER JOIN  => ( (#) ) SELECT * FROM wishlist INNER JOIN products ON (wishlist.id_product = products.id);
+LEFT JOIN   =>  (#(#) )
+RIGHT JOIN  => ( (#)#)
+CROSS JOIN  => dikali
+
+37. SUBQUERY
+menggunakan SELECT lainnya,
+misal SELECT dengan WHERE price > rata-rata, di mana rata-rata dari SELECT + AVG
+SELECT * FROM products WHERE price > (SELECT AVG(price) FROM products);
+
+SELECT MAX(cp.price) FROM (
+    SELECT price FROM categories INNER JOIN products ON (products.id_category = categories.id)
+) AS cp;
+
+38. SET OPERATOR
+UNION       => menggabungkan 2 query (#(#)$) // kalau ada duplikat maka yang dipakai 1
+UNION ALL   => seperti UNION tapi data duplikat tetap ditampilkan
+INTERSECT   => menggabungkan 2 query ( (#) ) // menggunakan INNER JOIN + DISTINCT atau SUBQUERY + DISTINCT
+MINUS       => query pertama - akan dihilangkan oleh query kedua
+
+39. TRANSACTION
+START TRANSACTION, COMMIT, ROLLBACK
+
+40. LOCKING
+mengunci data pada database
+
+// pada proses transaction, data yang kita ubah otomatis di-LOCK (OTOMATIS kalau di Transaction)
+User 1 UPDATE, User 2 UPDATE record sama = User 2 menunggu COMMIT atau ROLLBACK User 1
+
+// Locking Record Manual
+tambahkan FOR UPDATE
+START TRANSACTION;
+SELECT * FROM products;
+SELECT * FROM products WHERE id = "P0001" FOR UPDATE;
+UPDATE products SET quantity = quantity - 10 WHERE id = "P0001";
+
+// Deadlock
+User 1 & User 2 saling menunggu
+
+// Locking Table
+misal untuk generate report
+LOCK TABLES nama_table READ;
+LOCK TABLES nama_table WRITE;
+UNLOCK TABLES;
+
+// Locking Instance
+Perintah DDL akan diminta menunggu sampai proses unlock instance
+LOCK INSTANCE FOR BACKUP;
+UNLOCK INSTANCE;
+
+41. USER MANAGEMENT
+buat aplikasi? buat user untuk aplikasi tersebut, jangan pakai root
+
+Daftar Hak Akses
+https://dev.mysql.com/doc/refman/8.0/en/grant.html
+
+// Membuat & Menghapus User
+CREATE USER "cat"@"localhost";
+CREATE USER "monkey"@"%";
+DROP USER "cat"@"localhost";
+DROP USER "monkey"@"%";
+
+// Menambah & Menghapus Hak Akses ke User (bisa * bisa table)
+ GRANT SELECT ON belajar_mysql.* TO "cat"@"localhost";
+ GRANT SELECT, INSERT, UPDATE, DELETE ON belajar_mysql.* TO "monkey"@"localhost";
+
+ SHOW GRANTS FOR "cat"@"localhost";
+ SHOW GRANTS FOR "monkey"@"localhost";
+ 
+ REVOKE SELECT ON belajar_mysql FROM "cat"@"localhost";
+ REVOKE SELECT, INSERT, UPDATE, DELETE ON belajar_mysql FROM "monkey"@"localhost";
+
+ // Mengubah Password untuk User
+ SET PASSWORD FOR "cat"@"localhost" = "password";
+ SET PASSWORD FOR "monkey"@"%" = "password";
+
+ mysql -ucat -p
+
+ 42. BACKUP DATABASE
+ aplikasi khusus mysqldump
+ ./bin/mysqldump nama_database --user root --password --result-file=/Users/nfr/lokasi/backup.sql
+
+ 43. RESTORE DATABASE
+ bisa menggunakan aplikasi mysql client atau menggunakan perintah SOURCE di MySQL
+ ./bin/mysql --user=root --password nama_database < /Users/nfr/lokasi/backup.sql
+
+ use nama_database;
+ source /Users/nfr/lokasi/backup.sql
